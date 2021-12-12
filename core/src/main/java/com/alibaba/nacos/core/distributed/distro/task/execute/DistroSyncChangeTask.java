@@ -29,30 +29,42 @@ import com.alibaba.nacos.core.utils.Loggers;
  * @author xiweng.yy
  */
 public class DistroSyncChangeTask extends AbstractDistroExecuteTask {
-    
+
+    // 此任务操作类型为变更
     private static final DataOperation OPERATION = DataOperation.CHANGE;
-    
+
     public DistroSyncChangeTask(DistroKey distroKey, DistroComponentHolder distroComponentHolder) {
         super(distroKey, distroComponentHolder);
     }
-    
+
     @Override
     protected DataOperation getDataOperation() {
         return OPERATION;
     }
-    
+
+    /**
+     * 执行不带回调的任务
+     * @return
+     */
     @Override
     protected boolean doExecute() {
+        // 获取同步的数据类型
         String type = getDistroKey().getResourceType();
+        // 获取同步数据
         DistroData distroData = getDistroData(type);
         if (null == distroData) {
             Loggers.DISTRO.warn("[DISTRO] {} with null data to sync, skip", toString());
             return true;
         }
+        // 使用DistroTransportAgent同步数据
         return getDistroComponentHolder().findTransportAgent(type)
                 .syncData(distroData, getDistroKey().getTargetServer());
     }
-    
+
+    /**
+     * 执行带回调的任务
+     * @param callback callback
+     */
     @Override
     protected void doExecuteWithCallback(DistroCallback callback) {
         String type = getDistroKey().getResourceType();
@@ -64,12 +76,12 @@ public class DistroSyncChangeTask extends AbstractDistroExecuteTask {
         getDistroComponentHolder().findTransportAgent(type)
                 .syncData(distroData, getDistroKey().getTargetServer(), callback);
     }
-    
+
     @Override
     public String toString() {
         return "DistroSyncChangeTask for " + getDistroKey().toString();
     }
-    
+
     private DistroData getDistroData(String type) {
         DistroData result = getDistroComponentHolder().findDataStorage(type).getDistroData(getDistroKey());
         if (null != result) {

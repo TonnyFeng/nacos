@@ -25,25 +25,25 @@ import com.alibaba.nacos.core.distributed.distro.entity.DistroKey;
  * @author xiweng.yy
  */
 public interface DistroDataStorage {
-    
+
     /**
      * Get distro datum.
-     *
+     * 获取内部的DistroData
      * @param distroKey key of distro datum
      * @return need to sync datum
      */
     DistroData getDistroData(DistroKey distroKey);
-    
+
     /**
      * Get all distro datum snapshot.
-     *
+     * 获取内部存储的所有DistroData
      * @return all datum
      */
     DistroData getDatumSnapshot();
-    
+
     /**
      * Get verify datum.
-     *
+     * 获取所有的DistroData用于验证
      * @return verify datum
      */
     DistroData getVerifyData();

@@ -27,23 +27,24 @@ import com.alibaba.nacos.core.utils.Loggers;
  * @author xiweng.yy
  */
 public class DistroDelayTaskExecuteEngine extends NacosDelayTaskExecuteEngine {
-    
+
     public DistroDelayTaskExecuteEngine() {
         super(DistroDelayTaskExecuteEngine.class.getName(), Loggers.DISTRO);
     }
-    
+
     @Override
     public void addProcessor(Object key, NacosTaskProcessor taskProcessor) {
+        // 构建当前任务的key
         Object actualKey = getActualKey(key);
         super.addProcessor(actualKey, taskProcessor);
     }
-    
+
     @Override
     public NacosTaskProcessor getProcessor(Object key) {
         Object actualKey = getActualKey(key);
         return super.getProcessor(actualKey);
     }
-    
+
     private Object getActualKey(Object key) {
         return key instanceof DistroKey ? ((DistroKey) key).getResourceType() : key;
     }
