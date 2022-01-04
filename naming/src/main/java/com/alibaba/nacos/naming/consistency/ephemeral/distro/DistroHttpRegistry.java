@@ -37,21 +37,22 @@ import javax.annotation.PostConstruct;
  */
 @Component
 public class DistroHttpRegistry {
-    
+
+    // 一些Distro组件的集合
     private final DistroComponentHolder componentHolder;
-    
+    // 一些任务执行引擎的集合
     private final DistroTaskEngineHolder taskEngineHolder;
-    
+    // Distro协议http请求方式的数据对象
     private final DataStore dataStore;
-    
+    // 协议映射器
     private final DistroMapper distroMapper;
-    
+    // 一些全局配置
     private final GlobalConfig globalConfig;
-    
+    // Distro 一致性协议服务
     private final DistroConsistencyServiceImpl consistencyService;
-    
+    // Nacos节点管理器
     private final ServerMemberManager memberManager;
-    
+
     public DistroHttpRegistry(DistroComponentHolder componentHolder, DistroTaskEngineHolder taskEngineHolder,
             DataStore dataStore, DistroMapper distroMapper, GlobalConfig globalConfig,
             DistroConsistencyServiceImpl consistencyService, ServerMemberManager memberManager) {
@@ -63,19 +64,21 @@ public class DistroHttpRegistry {
         this.consistencyService = consistencyService;
         this.memberManager = memberManager;
     }
-    
+
     /**
      * Register necessary component to distro protocol for HTTP implement.
      */
     @PostConstruct
     public void doRegister() {
-        componentHolder.registerDataStorage(KeyBuilder.INSTANCE_LIST_KEY_PREFIX,
-                new DistroDataStorageImpl(dataStore, distroMapper));
+        // 注册com.alibaba.nacos.naming.iplist.类型数据的数据仓库实现
+        componentHolder.registerDataStorage(KeyBuilder.INSTANCE_LIST_KEY_PREFIX, new DistroDataStorageImpl(dataStore, distroMapper));
+        // 注册com.alibaba.nacos.naming.iplist.类型数据的数据传输代理对象实现
         componentHolder.registerTransportAgent(KeyBuilder.INSTANCE_LIST_KEY_PREFIX, new DistroHttpAgent(memberManager));
-        componentHolder.registerFailedTaskHandler(KeyBuilder.INSTANCE_LIST_KEY_PREFIX,
-                new DistroHttpCombinedKeyTaskFailedHandler(globalConfig, taskEngineHolder));
-        taskEngineHolder.registerNacosTaskProcessor(KeyBuilder.INSTANCE_LIST_KEY_PREFIX,
-                new DistroHttpDelayTaskProcessor(globalConfig, taskEngineHolder));
+        // 注册com.alibaba.nacos.naming.iplist.类型的失败任务处理器
+        componentHolder.registerFailedTaskHandler(KeyBuilder.INSTANCE_LIST_KEY_PREFIX, new DistroHttpCombinedKeyTaskFailedHandler(globalConfig , taskEngineHolder));
+        // 注册com.alibaba.nacos.naming.iplist.类型的任务处理器
+        taskEngineHolder.registerNacosTaskProcessor(KeyBuilder.INSTANCE_LIST_KEY_PREFIX, new DistroHttpDelayTaskProcessor(globalConfig, taskEngineHolder));
+        // 注册com.alibaba.nacos.naming.iplist.类型的DistroData数据处理器
         componentHolder.registerDataProcessor(consistencyService);
     }
 }

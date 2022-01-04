@@ -101,7 +101,7 @@ public class DistroProtocol {
     }
 
     private void startVerifyTask() {
-        // 启动数据报告的定时任务
+        // 启动数据报告的定时任务 默认5s 时间间隔
         GlobalExecutor.schedulePartitionDataTimedSync(new DistroVerifyTask(memberManager, distroComponentHolder),
                 distroConfig.getVerifyIntervalMillis());
     }
@@ -181,6 +181,7 @@ public class DistroProtocol {
      * @return true if verify data successfully, otherwise false
      */
     public boolean onVerify(DistroData distroData) {
+        // 根据不同类型获取不同的数据处理器
         String resourceType = distroData.getDistroKey().getResourceType();
         DistroDataProcessor dataProcessor = distroComponentHolder.findDataProcessor(resourceType);
         if (null == dataProcessor) {

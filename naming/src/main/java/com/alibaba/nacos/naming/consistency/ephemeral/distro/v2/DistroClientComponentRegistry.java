@@ -36,21 +36,28 @@ import javax.annotation.PostConstruct;
  */
 @Component
 public class DistroClientComponentRegistry {
-    
+
+    // Nacos节点管理器
     private final ServerMemberManager serverMemberManager;
-    
+
+    // Distro协议对象
     private final DistroProtocol distroProtocol;
-    
+
+    // 一些Distro组件的集合
     private final DistroComponentHolder componentHolder;
-    
+
+    // 一些任务执行引擎的集合
     private final DistroTaskEngineHolder taskEngineHolder;
-    
+
+    //存储发行版协议的一些配置。
     private final GlobalConfig globalConfig;
-    
+
+    // Nacos 客户端管理器
     private final ClientManager clientManager;
-    
+
+    // Nacos 客户端管理器
     private final ClusterRpcClientProxy clusterRpcClientProxy;
-    
+
     public DistroClientComponentRegistry(ServerMemberManager serverMemberManager, DistroProtocol distroProtocol,
             DistroComponentHolder componentHolder, DistroTaskEngineHolder taskEngineHolder, GlobalConfig globalConfig,
             ClientManagerDelegate clientManager, ClusterRpcClientProxy clusterRpcClientProxy) {
@@ -62,7 +69,7 @@ public class DistroClientComponentRegistry {
         this.clientManager = clientManager;
         this.clusterRpcClientProxy = clusterRpcClientProxy;
     }
-    
+
     /**
      * Register necessary component to distro protocol for v2 {@link com.alibaba.nacos.naming.core.v2.client.Client}
      * implement.
@@ -74,9 +81,13 @@ public class DistroClientComponentRegistry {
                 serverMemberManager);
         DistroClientTaskFailedHandler taskFailedHandler = new DistroClientTaskFailedHandler(globalConfig,
                 taskEngineHolder);
+        // 注册Nacos:Naming:v2:ClientData类型数据的数据仓库实现
         componentHolder.registerDataStorage(DistroClientDataProcessor.TYPE, dataProcessor);
+        // 注册Nacos:Naming:v2:ClientData类型的DistroData数据处理器
         componentHolder.registerDataProcessor(dataProcessor);
+        // 注册Nacos:Naming:v2:ClientData类型数据的数据传输代理对象实现
         componentHolder.registerTransportAgent(DistroClientDataProcessor.TYPE, transportAgent);
+        // 注册Nacos:Naming:v2:ClientData类型的失败任务处理器
         componentHolder.registerFailedTaskHandler(DistroClientDataProcessor.TYPE, taskFailedHandler);
     }
 }
